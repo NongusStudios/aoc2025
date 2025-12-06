@@ -9,47 +9,18 @@ use std::{fs::File, io::{self, Read}};
 fn is_repeated_char(s: &str) -> bool {
     match s.chars().next() {
         Some(first) => s.chars().all(|c| c == first),
-        None => false,
+        None => true,
     }
-}
-
-fn get_divisors(n: usize) -> Vec<usize> {
-    let mut divisors = Vec::new();
-    for i in 2..=((n as f64).sqrt() as usize) {
-        if n % i == 0 {
-            divisors.push(i);
-            if i != n / i {
-                divisors.push(n / i);
-            }
-        }
-    }
-    divisors.sort();
-    divisors
 }
 
 fn has_repeated_sequence(id: u64) -> bool {
-    let sid = id.to_string(); 
+    let mut sid = id.to_string(); 
     
-    if sid.len() <= 1 { return false; }
+    if sid.len() == 0 || sid.len() % 2 != 0 { return false; }
     if is_repeated_char(&sid) { return true; }
-    
-    let divisors = get_divisors(sid.len());
-    for (_, seq_len) in divisors.iter().enumerate() {
-        let seq = &sid[0..*seq_len];
-        
-        let mut pos = *seq_len;
-        let result = loop {
-            if pos + (*seq_len) > sid.len() { break true; }
-            if seq != &sid[pos..pos + (*seq_len)] {
-                break false;
-            }
-            pos += *seq_len;
-        };
 
-        if result { return true; }
-    }
-
-    false
+    let second = sid.split_off(sid.len()/2);
+    sid == second
 }
 
 fn read_to_end(path: &str) -> io::Result<Vec<u8>> {
@@ -87,7 +58,7 @@ fn parse_invalid_ids() -> Result<Vec<u64>, String> {
 }
 
 fn main() {
-    let ids = dbg!(parse_invalid_ids().unwrap());
+    let ids = parse_invalid_ids().unwrap();
     
     let mut sum: u64 = 0;
     ids.iter().for_each(|id| sum += id);
