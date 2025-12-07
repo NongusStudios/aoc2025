@@ -66,7 +66,7 @@ impl DB {
             if should_push { processed_ranges.push((*start, *end)); }
         }
 
-        for (start, end) in dbg!(processed_ranges).iter() {
+        for (start, end) in processed_ranges.iter() {
             id_count += (end - start) + 1;
         } 
 
